@@ -26,16 +26,44 @@ class AwGeodisOrderLink extends Module
         parent::__construct();
 
         $this->displayName = $this->trans('Geodis Order Link', [], 'Modules.Awgeodisorderlink.Admin');
-        $this->description = $this->trans('Provide a link to the Geodis order from the back office order page', [], 'Modules.Awgeodisorderlink.Admin');
+        $this->description = $this->trans('Provide a link to the Geodis order from the admin order page', [], 'Modules.Awgeodisorderlink.Admin');
     }
 
     public function install()
     {
-        return parent::install();
+        return parent::install()
+        && $this->registerHook('displayAdminOrderMain');
     }
 
     public function uninstall()
     {
-        return parent::uninstall();
+        return parent::uninstall()
+        && $this->unregisterHook('displayAdminOrderMain');
+    }
+
+    public function hookDisplayAdminOrderMain($params)
+    {
+        return $this->render($this->getModuleTemplatePath() . 'awgeodisorderlink.html.twig', [
+            'hello' => 'axel',
+        ]);
+    }
+
+    /**
+     * Render a twig template.
+     */
+    private function render(string $template, array $params = []): string
+    {
+        /** @var Twig_Environment $twig */
+        $twig = $this->get('twig');
+
+        return $twig->render($template, $params);
+    }
+
+    /**
+     * Get path to this module's template directory
+     */
+    private function getModuleTemplatePath(): string
+    {
+        return sprintf('@Modules/%s/views/templates/admin/', $this->name);
     }
 }
