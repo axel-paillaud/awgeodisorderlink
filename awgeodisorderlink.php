@@ -53,8 +53,14 @@ class AwGeodisOrderLink extends Module
         if (!$carrierData || $carrierData['external_module_name'] !== self::GEODIS_MODULE_NAME) {
             return '';
         }
+
+        $token = Tools::getAdminTokenLite('AdminGeodisShipment');
+
+        // On ne devrait pas prendre $params['id_order'] ici plutôt ?
+        $geodisUrl = $this->context->link->getAdminLink('AdminGeodisShipment') . '&id_order=' . (int)$order->id;
+
         return $this->render($this->getModuleTemplatePath() . 'awgeodisorderlink.html.twig', [
-            'hello' => $carrierData['external_module_name'],
+            'geodis_url' => $geodisUrl,
         ]);
     }
 
