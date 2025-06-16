@@ -11,6 +11,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AwGeodisOrderLink extends Module
 {
+    private const GEODIS_MODULE_NAME = 'geodisofficiel';
+
     public function __construct()
     {
         $this->name = 'awgeodisorderlink';
@@ -43,8 +45,16 @@ class AwGeodisOrderLink extends Module
 
     public function hookDisplayAdminOrderMain($params)
     {
+        $order = new Order((int) $params['id_order']);
+        $carrier = new Carrier((int) $order->id_carrier);
+
+        $carrierData = Db::getInstance()->getRow('SELECT * FROM '._DB_PREFIX_.'carrier WHERE id_carrier = '.(int)$carrier->id);
+
+        if (!$carrierData || $carrierData['external_module_name'] !== self::GEODIS_MODULE_NAME) {
+            return '';
+        }
         return $this->render($this->getModuleTemplatePath() . 'awgeodisorderlink.html.twig', [
-            'hello' => 'axel',
+            'hello' => $carrierData['external_module_name'],
         ]);
     }
 
