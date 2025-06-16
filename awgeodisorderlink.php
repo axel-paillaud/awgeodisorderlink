@@ -31,6 +31,12 @@ class AwGeodisOrderLink extends Module
         $this->description = $this->trans('Provide a link to the Geodis order from the admin order page', [], 'Modules.Awgeodisorderlink.Admin');
     }
 
+
+    public function isUsingNewTranslationSystem()
+    {
+        return true;
+    }
+
     public function install()
     {
         return parent::install()
