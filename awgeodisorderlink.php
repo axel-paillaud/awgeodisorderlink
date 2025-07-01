@@ -9,6 +9,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+
 class AwGeodisOrderLink extends Module
 {
     private const GEODIS_MODULE_NAME = 'geodisofficiel';
@@ -40,7 +42,8 @@ class AwGeodisOrderLink extends Module
     public function install()
     {
         return parent::install()
-        && $this->registerHook('displayAdminOrderMain');
+        && $this->registerHook('displayAdminOrderMain')
+        && $this->registerHook("actionAdminControllerSetMedia");
     }
 
     public function uninstall()
@@ -62,12 +65,36 @@ class AwGeodisOrderLink extends Module
 
         $token = Tools::getAdminTokenLite('AdminGeodisShipment');
 
-        // On ne devrait pas prendre $params['id_order'] ici plutôt ?
         $geodisUrl = $this->context->link->getAdminLink('AdminGeodisShipment') . '&id_order=' . (int)$order->id;
 
         return $this->render($this->getModuleTemplatePath() . 'awgeodisorderlink.html.twig', [
             'geodis_url' => $geodisUrl,
         ]);
+    }
+
+    public function hookActionAdminControllerSetMedia()
+    {
+        $controllerURI = $this->generateControllerURI();
+
+        Media::addJsDef([
+            "awGeodisOrderLinkUpdateStatusAjaxControllerUri" => $controllerURI,
+            "tokenAutoLabel" => \Tools::getAdminTokenLite(
+                "AdminAwGeodisOrderLink"
+            ),
+        ]);
+
+        $this->context->controller->addJS(
+            $this->_path . "views/js/awgeodisorderlink.js"
+        );
+    }
+
+    protected function generateControllerURI()
+    {
+        $router = SymfonyContainer::getInstance()->get("router");
+
+        return $router->generate(
+            "axelweb_awgeodisorderlink_ajax_update_status"
+        );
     }
 
     /**
