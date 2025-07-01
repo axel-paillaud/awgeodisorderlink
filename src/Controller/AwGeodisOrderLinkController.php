@@ -18,16 +18,64 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
  */
 
+namespace Axelweb\AwGeodisOrderLink\Controller;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-namespace Axelweb\AwGeodisOrderLink\Controller;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
-class ColissimoAutoLabelController extends FrameworkBundleAdminController
+class AwGeodisOrderLinkController extends FrameworkBundleAdminController
 {
-    public function ajaxUpdateStateOrder()
+    public function ajaxUpdateStateOrder(Request $request)
     {
-        dump("hello");
+        $data = json_decode($request->getContent(), true);
+        $orderId = (int) $data['orderId'] ?? 0;
+
+        if (!$orderId) {
+            return new JsonResponse(['success' => false, 'message' => 'ID manquant'], 400);
+        }
+
+        try {
+            $order = new \Order((int) $orderId);
+            if (!\Validate::isLoadedObject($order)) {
+                throw new \PrestaShopException("Invalid Order ID");
+            }
+
+            $this->updateOrderStatus($order);
+
+            return new JsonResponse([
+                "success" => true,
+                "message" => $this->trans(
+                    "Order status updated successfully",
+                    "Modules.Awgeodisorderlink.Admin"
+                ),
+            ]);
+        } catch (\PrestaShopException $e) {
+            return new JsonResponse([
+                "success" => false,
+                "message" => $e->getMessage(),
+            ]);
+        }
     }
+
+   /*
+    * @param object $order Order
+    * @return void
+    */
+   private function updateOrderStatus(object $order): void
+   {
+       $orderHistory = new \OrderHistory();
+       $orderHistory->id_order = (int) $order->id;
+
+       $orderHistory->changeIdOrderState(_PS_OS_PREPARATION_, $order);
+
+       // Save
+       if (!$orderHistory->add()) {
+           throw new \PrestaShopException("Failed to add order history");
+       }
+   }
 }
