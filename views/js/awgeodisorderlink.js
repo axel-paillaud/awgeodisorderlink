@@ -13,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(response => response.json())
     .then(data => {
-      showSuccessMessage(data.message);
+      if (data.success) {
+        showSuccessMessage(data.message);
+      } else {
+        showErrorMessage(data.message);
+      }
     })
     .catch(error => {
       console.error(error);
