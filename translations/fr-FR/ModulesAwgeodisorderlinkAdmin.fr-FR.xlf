@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="admin-dev" source-language="fr-FR" target-language="fr-FR" datatype="plaintext">
+    <body>
+      <trans-unit id="0b273af0e3066aebc11585ed3bc4be77">
+        <source>Order status updated successfully</source>
+        <target>Le statut de la commande a été mis à jour avec succès</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="4cfb754903fa02358800b025b9fe5e27">
+        <source>Geodis Order Link</source>
+        <target>Geodis Order Link</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f8378d1bc252b050b0c02ab63f61e48c">
+        <source>Provide a link to the Geodis order from the admin order page</source>
+        <target>Fournir un lien vers la commande Geodis depuis la page de commande administrateur</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="2f6eadf14fe4c4592e0156364f7ed429">
+        <source>Link to Geodis order</source>
+        <target>Lien vers la commande Geodis</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="f5359d1dd07def542aa9b0577fb27068">
+        <source>Update status</source>
+        <target>Mettre à jour le statut</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
