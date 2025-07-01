@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const updateBtn = document.getElementById('geodis-link-update-status');
 
@@ -14,10 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      showSuccessMessage(data.message);
     })
     .catch(error => {
       console.error(error);
+      showErrorMessage(error.message);
     });
   });
 });
