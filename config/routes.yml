@@ -1,0 +1,6 @@
+axelweb_awgeodisorderlink_ajax_update_state_order:
+  path: awgeodisorderlink/ajax-update-state-order
+  methods: [POST]
+  defaults:
+    _controller: 'Axelweb\AwGeodisOrderLink\Controller\AwGeodisOrderLinkController::ajaxUpdateStateOrder'
+    _legacy_controller: 'AdminOrders'

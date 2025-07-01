@@ -77,7 +77,7 @@ class AwGeodisOrderLink extends Module
         $controllerURI = $this->generateControllerURI();
 
         Media::addJsDef([
-            "awGeodisOrderLinkUpdateStatusAjaxControllerUri" => $controllerURI,
+            "awGeodisOrderLinkUpdateStateOrderAjaxControllerUri" => $controllerURI,
             "tokenAutoLabel" => \Tools::getAdminTokenLite(
                 "AdminAwGeodisOrderLink"
             ),
@@ -93,7 +93,7 @@ class AwGeodisOrderLink extends Module
         $router = SymfonyContainer::getInstance()->get("router");
 
         return $router->generate(
-            "axelweb_awgeodisorderlink_ajax_update_status"
+            "axelweb_awgeodisorderlink_ajax_update_state_order"
         );
     }
 

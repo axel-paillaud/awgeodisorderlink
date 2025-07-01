@@ -1,0 +1,13 @@
+{
+  "name": "axelweb/awgeodisorderlink",
+  "description": "Provide a link to the Geodis order from the admin order page",
+  "autoload": {
+    "psr-4": {
+      "Axelweb\\AwGeodisOrderLink\\": "src/"
+    }
+  },
+  "config": {
+      "prepend-autoloader": false
+  },
+  "type": "prestashop-module"
+}
