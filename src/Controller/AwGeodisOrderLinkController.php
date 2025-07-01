@@ -26,5 +26,8 @@ namespace Axelweb\AwGeodisOrderLink\Controller;
 
 class ColissimoAutoLabelController extends FrameworkBundleAdminController
 {
-
+    public function ajaxUpdateStateOrder()
+    {
+        dump("hello");
+    }
 }
