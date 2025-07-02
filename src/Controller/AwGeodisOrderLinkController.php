@@ -71,6 +71,9 @@ class AwGeodisOrderLinkController extends FrameworkBundleAdminController
        $orderHistory = new \OrderHistory();
        $orderHistory->id_order = (int) $order->id;
 
+       $employee = \Context::getContext()->employee;
+       $orderHistory->id_employee = $employee ? (int) $employee->id : 0;
+
        $orderHistory->changeIdOrderState(_PS_OS_SHIPPING_, $order);
 
        // Save
