@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const updateBtn = document.getElementById('geodis-link-update-status');
 
+  if (!updateBtn) return;
+
   updateBtn.addEventListener('click', () => {
     fetch(awGeodisOrderLinkUpdateStateOrderAjaxControllerUri, {
       method: 'POST',
