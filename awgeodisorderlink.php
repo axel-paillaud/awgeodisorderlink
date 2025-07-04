@@ -83,7 +83,7 @@ class AwGeodisOrderLink extends Module
 
             Media::addJsDef([
                 "awGeodisOrderLinkUpdateStateOrderAjaxControllerUri" => $controllerURI,
-                "tokenAutoLabel" => \Tools::getAdminTokenLite(
+                "tokenAwGeodisOrderLink" => \Tools::getAdminTokenLite(
                     "AdminAwGeodisOrderLink"
                 ),
                 "orderId" => $orderId
