@@ -75,12 +75,10 @@ class AwGeodisOrderLink extends Module
     public function hookActionAdminControllerSetMedia()
     {
         $controllerName = Tools::getValue('controller');
+        $orderId = (int) Tools::getValue('id_order');
+        $controllerURI = $this->generateControllerURI();
 
         if ($controllerName === 'AdminOrders') {
-            $orderId = (int) Tools::getValue('id_order');
-
-            $controllerURI = $this->generateControllerURI();
-
             Media::addJsDef([
                 "awGeodisOrderLinkUpdateStateOrderAjaxControllerUri" => $controllerURI,
                 "tokenAwGeodisOrderLink" => \Tools::getAdminTokenLite(
@@ -91,6 +89,17 @@ class AwGeodisOrderLink extends Module
 
             $this->context->controller->addJS(
                 $this->_path . "views/js/awgeodisorderlink.js"
+            );
+        }
+
+        if ($controllerName === 'AdminGeodisShipment' && $orderId) {
+            Media::addJsDef([
+                "awGeodisOrderLinkUpdateStateOrderAjaxControllerUri" => $controllerURI,
+                "orderId" => $orderId
+            ]);
+
+            $this->context->controller->addJS(
+                $this->_path . "views/js/awgeodisshipment.js"
             );
         }
     }
