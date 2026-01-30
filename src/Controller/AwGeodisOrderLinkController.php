@@ -47,6 +47,11 @@ class AwGeodisOrderLinkController extends FrameworkBundleAdminController
 
             $this->updateOrderStatus($order);
 
+            // Clear any output buffer that may have been filled by hooks
+            if (ob_get_level()) {
+                ob_clean();
+            }
+
             return new JsonResponse([
                 "success" => true,
                 "message" => $this->trans(
