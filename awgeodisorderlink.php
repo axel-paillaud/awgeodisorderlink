@@ -92,7 +92,7 @@ class AwGeodisOrderLink extends Module
             );
         }
 
-        if ($controllerName === 'AdminGeodisShipment' && $orderId) {
+        if ($controllerName === 'AdminGeodisShipment') {
             Media::addJsDef([
                 "awGeodisOrderLinkUpdateStateOrderAjaxControllerUri" => $controllerURI,
                 "orderId" => $orderId
