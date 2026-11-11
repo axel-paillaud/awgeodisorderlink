@@ -1,3 +1,5 @@
 bin
 .rsyncignore
 vendor
+config*.xml
+.check-state

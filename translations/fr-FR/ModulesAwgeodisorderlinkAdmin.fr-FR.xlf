@@ -27,6 +27,21 @@
         <target>Mettre à jour le statut</target>
         <note>Line: </note>
       </trans-unit>
+      <trans-unit id="e074201be2c2605dbd174d84cb556ce8">
+        <source>Missing order ID</source>
+        <target>Identifiant de commande manquant</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="24909e87dc242b9dd539e10609b8b050">
+        <source>Order not found</source>
+        <target>Commande introuvable</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="04b5d7ef7744b96c40af95f975046c87">
+        <source>Order status could not be updated</source>
+        <target>Le statut de la commande n'a pas pu être mis à jour</target>
+        <note>Line: </note>
+      </trans-unit>
     </body>
   </file>
 </xliff>

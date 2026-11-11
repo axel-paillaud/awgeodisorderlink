@@ -1,0 +1,14 @@
+# Back office container (Symfony admin kernel).
+#
+# Ids are the class names, services are private. The hooks of
+# awgeodisorderlink.php only use core services (twig, router) and always run
+# in the back office: no front container file is needed.
+services:
+  _defaults:
+    public: false
+    autowire: true
+    autoconfigure: true
+
+  # ── Controllers (autoconfigure adds the controller.service_arguments tag) ───
+
+  Axelweb\AwGeodisOrderLink\Controller\AwGeodisOrderLinkController: ~

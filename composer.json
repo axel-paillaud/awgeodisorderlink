@@ -1,13 +1,24 @@
 {
   "name": "axelweb/awgeodisorderlink",
   "description": "Provide a link to the Geodis order from the admin order page",
+  "type": "prestashop-module",
+  "license": "AFL-3.0",
+  "authors": [
+    {
+      "name": "Axelweb",
+      "email": "contact@axelweb.fr"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Axelweb\\AwGeodisOrderLink\\": "src/"
     }
   },
-  "config": {
-      "prepend-autoloader": false
+  "require": {
+    "php": ">=8.1"
   },
-  "type": "prestashop-module"
+  "config": {
+    "prepend-autoloader": false,
+    "autoloader-suffix": "AwGeodisOrderLink"
+  }
 }

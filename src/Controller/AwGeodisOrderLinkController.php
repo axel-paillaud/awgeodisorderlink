@@ -1,89 +1,113 @@
 <?php
 /**
- * Copyright since 2007 PrestaShop SA and Contributors
- * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License version 3.0
- * that is bundled with this package in the file LICENSE.md.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
  * @author    Axelweb <contact@axelweb.fr>
- * @copyright 2025 Axelweb
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ * @copyright 2026 Axelweb
+ * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+declare(strict_types=1);
 
 namespace Axelweb\AwGeodisOrderLink\Controller;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use PrestaShop\PrestaShop\Core\ConfigurationInterface;
+use PrestaShopBundle\Controller\Admin\PrestaShopAdminController;
+use PrestaShopBundle\Security\Attribute\AdminSecurity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class AwGeodisOrderLinkController extends FrameworkBundleAdminController
+/**
+ * AJAX endpoint called from the admin order page ("Update status" button)
+ * and from the Geodis shipment page ("Transmit" button, via sendBeacon):
+ * sets the order status to "Shipped" (PS_OS_SHIPPING).
+ */
+final class AwGeodisOrderLinkController extends PrestaShopAdminController
 {
-    public function ajaxUpdateStateOrder(Request $request)
+    public function __construct(
+        private readonly ConfigurationInterface $configuration,
+    ) {
+    }
+
+    #[AdminSecurity(
+        "is_granted('update', request.get('_legacy_controller'))",
+        message: 'You do not have permission to update this.',
+        jsonResponse: true,
+    )]
+    public function ajaxUpdateStateOrder(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $orderId = (int) $data['orderId'] ?? 0;
+        $orderId = is_array($data) ? (int) ($data['orderId'] ?? 0) : 0;
 
-        if (!$orderId) {
-            return new JsonResponse(['success' => false, 'message' => 'ID manquant'], 400);
+        if ($orderId <= 0) {
+            return $this->jsonError(
+                $this->trans('Missing order ID', [], 'Modules.Awgeodisorderlink.Admin'),
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $order = new \Order($orderId);
+        if (!\Validate::isLoadedObject($order)) {
+            return $this->jsonError(
+                $this->trans('Order not found', [], 'Modules.Awgeodisorderlink.Admin'),
+                Response::HTTP_NOT_FOUND
+            );
         }
 
         try {
-            $order = new \Order((int) $orderId);
-            if (!\Validate::isLoadedObject($order)) {
-                throw new \PrestaShopException("Invalid Order ID");
+            $shippedStateId = (int) $this->configuration->get('PS_OS_SHIPPING');
+
+            // Transmitting a shipment twice, or clicking the button twice,
+            // must not add the same status to the order history again.
+            if ((int) $order->getCurrentState() !== $shippedStateId) {
+                $this->updateOrderStatus($order, $shippedStateId);
             }
+        } catch (\Throwable $e) {
+            \PrestaShopLogger::addLog(
+                sprintf('awgeodisorderlink: status of order %d not updated: %s', $orderId, $e->getMessage()),
+                3,
+                null,
+                'Order',
+                $orderId,
+                true
+            );
 
-            $this->updateOrderStatus($order);
+            return $this->jsonError(
+                $this->trans('Order status could not be updated', [], 'Modules.Awgeodisorderlink.Admin'),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
-            // Clear any output buffer that may have been filled by hooks
-            if (ob_get_level()) {
-                ob_clean();
-            }
+        // Discard any output left by the order status hooks of other modules
+        $this->cleanOutputBuffer();
 
-            return new JsonResponse([
-                "success" => true,
-                "message" => $this->trans(
-                    "Order status updated successfully",
-                    "Modules.Awgeodisorderlink.Admin"
-                ),
-            ]);
-        } catch (\PrestaShopException $e) {
-            return new JsonResponse([
-                "success" => false,
-                "message" => $e->getMessage(),
-            ]);
+        return new JsonResponse([
+            'success' => true,
+            'message' => $this->trans('Order status updated successfully', [], 'Modules.Awgeodisorderlink.Admin'),
+        ]);
+    }
+
+    private function updateOrderStatus(\Order $order, int $orderStateId): void
+    {
+        $orderHistory = new \OrderHistory();
+        $orderHistory->id_order = (int) $order->id;
+        $orderHistory->id_employee = $this->getEmployeeContext()->getEmployee()?->getId() ?? 0;
+        $orderHistory->changeIdOrderState($orderStateId, $order);
+
+        if (!$orderHistory->add()) {
+            throw new \PrestaShopException('Failed to add order history');
         }
     }
 
-   /*
-    * @param object $order Order
-    * @return void
-    */
-   private function updateOrderStatus(object $order): void
-   {
-       $orderHistory = new \OrderHistory();
-       $orderHistory->id_order = (int) $order->id;
+    private function jsonError(string $message, int $statusCode): JsonResponse
+    {
+        $this->cleanOutputBuffer();
 
-       $employee = \Context::getContext()->employee;
-       $orderHistory->id_employee = $employee ? (int) $employee->id : 0;
+        return new JsonResponse(['success' => false, 'message' => $message], $statusCode);
+    }
 
-       $orderHistory->changeIdOrderState(_PS_OS_SHIPPING_, $order);
-
-       // Save
-       if (!$orderHistory->add()) {
-           throw new \PrestaShopException("Failed to add order history");
-       }
-   }
+    private function cleanOutputBuffer(): void
+    {
+        if (ob_get_level()) {
+            ob_clean();
+        }
+    }
 }

@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'awgeodis_order_id';
 
   // Store orderId in sessionStorage if available from PHP
-  if (typeof orderId !== 'undefined' && orderId) {
-    sessionStorage.setItem(STORAGE_KEY, orderId);
+  if (typeof awGeodisOrderLinkOrderId !== 'undefined' && awGeodisOrderLinkOrderId) {
+    sessionStorage.setItem(STORAGE_KEY, awGeodisOrderLinkOrderId);
   }
 
   // Retrieve orderId from sessionStorage (works after page reload)

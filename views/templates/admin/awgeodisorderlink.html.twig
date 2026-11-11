@@ -1,9 +1,10 @@
+{% trans_default_domain 'Modules.Awgeodisorderlink.Admin' %}
 <div class="card">
     <div class="card-header">
-        <img class="logo" src="/modules/awgeodisorderlink/views/img/logo-small.png">
+        <img class="logo" src="{{ logo_url }}" alt="Geodis">
     </div>
     <div class="card-body">
-        <a class="btn btn-primary" href="{{ geodis_url }}">{{ 'Link to Geodis order'|trans({}, 'Modules.Awgeodisorderlink.Admin') }}</a>
-        <button id="geodis-link-update-status" class="btn btn-secondary ml-md-3">{{ 'Update status'|trans({}, 'Modules.Awgeodisorderlink.Admin') }}</button>
+        <a class="btn btn-primary" href="{{ geodis_url }}">{{ 'Link to Geodis order'|trans }}</a>
+        <button type="button" id="geodis-link-update-status" class="btn btn-secondary ml-md-3" data-order-id="{{ order_id }}">{{ 'Update status'|trans }}</button>
     </div>
 </div>

@@ -4,13 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!updateBtn) return;
 
   updateBtn.addEventListener('click', () => {
+    updateBtn.disabled = true;
+
     fetch(awGeodisOrderLinkUpdateStateOrderAjaxControllerUri, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        orderId: orderId,
+        orderId: updateBtn.dataset.orderId,
       }),
     })
     .then(response => response.json())
@@ -24,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(error => {
       console.error(error);
       showErrorMessage(error.message);
+    })
+    .finally(() => {
+      updateBtn.disabled = false;
     });
   });
 });
